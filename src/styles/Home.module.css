@@ -250,6 +250,93 @@
   }
 }
 
+.walletButtons {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.button {
+  background-color: #3d3d3d;
+  color: #fff;
+  border: none;
+  padding: 0.7em 1.2em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #4d4d4d;
+}
+
+.usersContainer {
+  background-color: #2e2e2e;
+  padding: 1em;
+}
+
+.userCard {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.userCard:hover {
+  background-color: #3d3d3d;
+  border-radius: 0.5em;
+}
+
+.userNumber {
+  width: 2em;
+  text-align: center;
+  font-size: 1.5em;
+  color: #fff;
+}
+
+.userInfo {
+  margin-left: 1em;
+}
+
+.userName {
+  font-size: 1.2em;
+  color: #fff;
+}
+
+.userEmail {
+  font-size: 1.2em;
+  color: #fff;
+}
+
+.userAuthority {
+  font-size: 1.2em;
+  color: #fff;
+}
+
+.title {
+  color: #fff;
+  text-align: center;
+  margin-bottom: 2em;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2em;
+}
+
+.button {
+  background-color: #4CAF50;
+  color: #fff;
+  padding: 0.5em 1em;
+  border-radius: 5px;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  margin-right: 0.5em;
+}
+
 /* Tablet and Smaller Desktop */
 @media (min-width: 701px) and (max-width: 1120px) {
   .grid {
