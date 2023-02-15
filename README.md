@@ -1,6 +1,6 @@
 # gum-example-app
 
-This is a reference example app built using [@gumhq/sdk](https://github.com/gumhq/sdk) and Next.js.
+This is a reference example app built using [@gumhq/react-sdk](https://github.com/gumhq/sdk/tree/master/packages/react-sdk) and Next.js.
 
 ## Getting Started
 
