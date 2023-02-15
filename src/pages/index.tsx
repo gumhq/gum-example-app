@@ -1,14 +1,13 @@
 import Head from 'next/head'
 import styles from '@/styles/Home.module.css'
 import dynamic from 'next/dynamic'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { AnchorWallet, useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey, Connection } from "@solana/web3.js";
 import { useEffect, useMemo, useState } from 'react';
-import { useGumSDK } from '@/hooks/gumSDK';
 import CreatePost from '@/components/createPost';
 import CreateProfile from '@/components/createProfile';
 import CreateUser from '@/components/createUser';
-import CreateProfileMetadata from '@/components/createProfileMetadata';
+import { useGum } from '@gumhq/react-sdk';
 
 const WalletMultiButtonDynamic = dynamic(
     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
@@ -17,18 +16,20 @@ const WalletMultiButtonDynamic = dynamic(
 
 export default function Home() {
   const wallet = useWallet();
-  const userPublicKey = wallet.publicKey as PublicKey;
-
+  const anchorWallet = useAnchorWallet() as AnchorWallet;
+  const userPublicKey = wallet?.publicKey as PublicKey;
+  
   const [usersList, setUsersList] = useState<any[]>([]);
   const [profilesList, setProfilesList] = useState<any[]>([]);
   const [profileMetadataList, setProfileMetadataList] = useState<any[]>([]);
   const [postsList, setPostsList] = useState<any[]>([]);
 
   const connection = useMemo(() => new Connection("https://api.devnet.solana.com", "confirmed"), []);
-  const sdk = useGumSDK(connection, { preflightCommitment: "confirmed" }, "devnet");
+  const sdk = useGum(anchorWallet, connection, { preflightCommitment: "confirmed" }, "devnet");
 
   useEffect(() => {
     if (!wallet.connected) return;
+    if (!sdk) return;
     const getData = async () => {
         const profileMetadataList = await sdk.profileMetadata.getProfileMetadataAccountsByUser(userPublicKey);
         setUsersList(await sdk.user.getUserAccountsByUser(userPublicKey));
@@ -38,7 +39,7 @@ export default function Home() {
     };
     getData();
   }, [wallet.connected]);
-  
+
   return (
     <>
       <Head>
@@ -48,23 +49,22 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <div className={styles.leftContainer}>
-            <div className={styles.walletButtons}>
-                <WalletMultiButtonDynamic />
+        { sdk && (
+            <div className={styles.leftContainer}>
+                <div className={styles.walletButtons}>
+                    <WalletMultiButtonDynamic />
+                </div>
+                <div className={styles.componentContainer}>
+                    <CreateUser sdk={sdk} />
+                </div>
+                <div className={styles.componentContainer}>
+                    <CreateProfile sdk={sdk} />
+                </div>
+                <div className={styles.componentContainer}>
+                    <CreatePost sdk={sdk} />
+                </div>
             </div>
-            <div className={styles.componentContainer}>
-                <CreateUser sdk={sdk} />
-            </div>
-            <div className={styles.componentContainer}>
-                <CreateProfile sdk={sdk} />
-            </div>
-            <div className={styles.componentContainer}>
-                <CreateProfileMetadata sdk={sdk} />
-            </div>
-            <div className={styles.componentContainer}>
-                <CreatePost sdk={sdk} />
-            </div>
-        </div>
+        )}
         <div className={styles.rightContainer}>
             <div className={styles.listContainer}>
                 <h2 className={styles.title}>Your User Accounts</h2>

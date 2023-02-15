@@ -1,5 +1,5 @@
 import { AnchorWallet, useAnchorWallet } from "@solana/wallet-adapter-react";
-import { SDK } from "@gumhq/sdk";
+import { SDK } from "@gumhq/react-sdk";
 import { Cluster, ConfirmOptions, Connection } from "@solana/web3.js";
 
 export const useGumSDK = (connection: Connection, opts: ConfirmOptions, cluster: Cluster) => {
