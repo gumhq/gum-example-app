@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 import CreatePost from '@/components/createPost';
 import CreateProfile from '@/components/createProfile';
 import CreateUser from '@/components/createUser';
-import { useGum } from '@gumhq/react-sdk';
+import { useGumSDK } from '@/hooks/useGumSDK';
 
 const WalletMultiButtonDynamic = dynamic(
     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
@@ -16,7 +16,6 @@ const WalletMultiButtonDynamic = dynamic(
 
 export default function Home() {
   const wallet = useWallet();
-  const anchorWallet = useAnchorWallet() as AnchorWallet;
   const userPublicKey = wallet?.publicKey as PublicKey;
   
   const [usersList, setUsersList] = useState<any[]>([]);
@@ -25,7 +24,7 @@ export default function Home() {
   const [postsList, setPostsList] = useState<any[]>([]);
 
   const connection = useMemo(() => new Connection("https://api.devnet.solana.com", "confirmed"), []);
-  const sdk = useGum(anchorWallet, connection, { preflightCommitment: "confirmed" }, "devnet");
+  const sdk = useGumSDK(connection, { preflightCommitment: "confirmed" }, "devnet");
 
   useEffect(() => {
     if (!wallet.connected) return;
