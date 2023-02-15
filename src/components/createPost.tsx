@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import styles from '@/styles/Home.module.css'
+import styles from '@/styles/Home.module.css';
 import { PublicKey } from '@solana/web3.js';
-import { SDK } from '@gumhq/sdk';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useCreatePost, SDK } from '@gumhq/react-sdk';
 
 interface Props {
   sdk: SDK;
 }
 
+// Use this function if you want to create a post without using the react-sdk
 export const handleCreatePost = async (metadataUri: String, profilePDA: PublicKey, userPDA: PublicKey, user: PublicKey, sdk: SDK) => {
-  if (!metadataUri || !userPDA || !profilePDA) return;
   const post = await sdk.post.create(metadataUri, profilePDA, userPDA, user);
   await post.instructionMethodBuilder.rpc();
 };
@@ -19,6 +19,7 @@ const CreatePost = ({ sdk }: Props) => {
   const [metadataUri, setMetadataUri] = useState('');
   const [userProfileAccounts, setUserProfileAccounts] = useState<any>([]);
   const [selectedProfileOption, setSelectedProfileOption] = useState<any>(null);
+  const { create, postPDA, error, loading } = useCreatePost(sdk);
 
   useEffect(() => {
     if (!wallet.connected) return;
@@ -72,7 +73,7 @@ const CreatePost = ({ sdk }: Props) => {
         disabled={!selectedProfileOption}
         onClick={(event) => {
           event.preventDefault();
-          handleCreatePost(metadataUri, selectedProfileOption!.profilePDA, selectedProfileOption!.userPDA, wallet.publicKey as PublicKey, sdk);
+          create(metadataUri, selectedProfileOption?.profilePDA, selectedProfileOption?.userPDA, wallet.publicKey as PublicKey);
         }}
       >
         Create Post
