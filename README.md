@@ -2,6 +2,8 @@
 
 This is a reference example app built using [@gumhq/react-sdk](https://github.com/gumhq/sdk/tree/master/packages/react-sdk) and Next.js.
 
+You can find the GitHub Octernship Assignment information [here](https://github.com/gumhq/octernship/blob/main/README.md#octernship)
+
 ## Getting Started
 
 First, install the dependencies:
