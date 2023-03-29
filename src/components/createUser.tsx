@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from '@/styles/Home.module.css'
 import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -8,27 +7,24 @@ interface Props {
   sdk: SDK;
 }
 
-// Use this function if you want to create a user without using the react-sdk
-export const handleCreateUser = async (
-  user: PublicKey,
-  sdk: SDK
-) => {
-  const program = await sdk.user.create(user);
-  await program.instructionMethodBuilder.rpc();
-};
-
 const CreateUser = ({sdk}: Props) => {
   const wallet = useWallet();
-  const { create, userPDA, loading, error} = useCreateUser(sdk);
+  const { getOrCreate, isCreatingUser, createUserError} = useCreateUser(sdk);
+
+  // Save the userPDA to your database to get or create the user's profile later
+  // console.log('userPDA', userPDA);
+  // console.log('error', createUserError);
+  // console.log('loading', isCreatingUser);
 
   return (
     <div>
       <h1 className={`${styles.title}`}>Create New User</h1>
       <button
         className={`${styles.button}`}
-        onClick={(event) => {
+        onClick={async (event) => {
           event.preventDefault();
-          create(wallet.publicKey as PublicKey);
+          const userPDA = await getOrCreate(wallet.publicKey as PublicKey);
+          console.log('userPDA', userPDA);
         }}
       >
         Create User

@@ -28,7 +28,7 @@ const CreateProfile = ({sdk}: Props) => {
   const [usersList, setUsersList] = useState([]);
   const [selectedNamespaceOption, setSelectedNamespaceOption] = useState("Personal") as [Namespace, any];
   const [selectedUserOption, setSelectedUserOption] = useState("");
-  const { create, profilePDA, error, loading } = useCreateProfile(sdk);
+  const { getOrCreate, isCreatingProfile, createProfileError } = useCreateProfile(sdk);
 
   useEffect(() => {
     if (!wallet.connected) return;
@@ -41,7 +41,7 @@ const CreateProfile = ({sdk}: Props) => {
       }
     };
     init();
-  }, [wallet.connected]);
+  }, [wallet.connected, userPublicKey]);
 
   return (
     <div>
@@ -87,7 +87,8 @@ const CreateProfile = ({sdk}: Props) => {
         className={`${styles.button}`}
         onClick={async (event) => {
           event.preventDefault();
-          create(metadataUri, selectedNamespaceOption, new PublicKey(selectedUserOption), userPublicKey);
+          const profilePDA = await getOrCreate(metadataUri, selectedNamespaceOption, new PublicKey(selectedUserOption), userPublicKey);
+          console.log('profilePDA', profilePDA);
         }}
       >
         Create Profile
