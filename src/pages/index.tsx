@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import CreatePost from '@/components/createPost';
 import CreateProfile from '@/components/createProfile';
 import CreateUser from '@/components/createUser';
-import { withGumSDK } from '@/components/withGumSDK';
 import { useGumContext } from '@gumhq/react-sdk';
 
 const WalletMultiButtonDynamic = dynamic(
@@ -53,13 +52,13 @@ function Home() {
                     <WalletMultiButtonDynamic />
                 </div>
                 <div className={styles.componentContainer}>
-                    <CreateUser sdk={sdk} />
+                    <CreateUser />
                 </div>
                 <div className={styles.componentContainer}>
-                    <CreateProfile sdk={sdk} />
+                    <CreateProfile />
                 </div>
                 <div className={styles.componentContainer}>
-                    <CreatePost sdk={sdk} />
+                    <CreatePost />
                 </div>
             </div>
         )}
@@ -129,4 +128,4 @@ function Home() {
   )
 }
 
-export default withGumSDK(Home);
+export default Home;

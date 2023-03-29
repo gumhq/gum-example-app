@@ -1,14 +1,19 @@
-import { AnchorWallet, useAnchorWallet } from "@solana/wallet-adapter-react";
-import { useGum } from "@gumhq/react-sdk";
-import { Cluster, ConfirmOptions, Connection } from "@solana/web3.js";
+import { AnchorWallet, useAnchorWallet } from '@solana/wallet-adapter-react';
+import { GRAPHQL_ENDPOINTS, useGum } from '@gumhq/react-sdk';
+import { useConnection } from '@solana/wallet-adapter-react';
+import { useMemo } from 'react';
 import { GraphQLClient } from "graphql-request";
-import { useMemo } from "react";
 
-export const useGumSDK = (connection: Connection, opts: ConfirmOptions, cluster: Cluster, gpl_endpoint: string) => {
+export const useGumSDK = () => {
+  const { connection } = useConnection();
   const anchorWallet = useAnchorWallet() as AnchorWallet;
-  const gqlClient = useMemo(() => new GraphQLClient(gpl_endpoint), [gpl_endpoint]);
 
-  const sdk = useGum(anchorWallet,connection, opts, cluster, gqlClient);
+  // GraphQL endpoint is chosen based on the network
+  const graphqlEndpoint = GRAPHQL_ENDPOINTS['devnet'];
+
+  const gqlClient = useMemo(() => new GraphQLClient(graphqlEndpoint), [graphqlEndpoint]);
+
+  const sdk = useGum(anchorWallet, connection, {preflightCommitment: 'confirmed'}, "devnet", gqlClient);
 
   return sdk;
 };

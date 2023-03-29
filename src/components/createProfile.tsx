@@ -2,27 +2,13 @@ import React, { useEffect, useState } from 'react';
 import styles from '@/styles/Home.module.css'
 import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react'; 
-import { SDK, useCreateProfile } from '@gumhq/react-sdk';
+import { SDK, useCreateProfile, useGumContext } from '@gumhq/react-sdk';
 
 type Namespace = "Professional" | "Personal" | "Gaming" | "Degen";
 
-interface Props {
-  sdk: SDK;
-}
-
-export const handleCreateProfile = async (
-  userPDA: PublicKey,
-  namespace: Namespace,
-  user: PublicKey,
-  sdk: SDK
-) => {
-  if (!userPDA) return;
-  const program = await sdk.profile.create(userPDA, namespace, user);
-  await program.instructionMethodBuilder.rpc();
-};
-
-const CreateProfile = ({sdk}: Props) => {
+const CreateProfile = () => {
   const wallet = useWallet();
+  const { sdk } = useGumContext();
   const userPublicKey = wallet.publicKey as PublicKey;
   const [metadataUri, setMetadataUri] = useState('');
   const [usersList, setUsersList] = useState([]);

@@ -2,12 +2,8 @@ import React, { useEffect, useState } from 'react';
 import styles from '@/styles/Home.module.css';
 import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useCreatePost, SDK, useSessionWallet } from '@gumhq/react-sdk';
+import { useCreatePost, SDK, useSessionWallet, useGumContext } from '@gumhq/react-sdk';
 import { updateSessionWallet } from '@/utils/sessionManager';
-
-interface Props {
-  sdk: SDK;
-}
 
 // Use this function if you want to create a post without using the react-sdk
 export const handleCreatePost = async (metadataUri: string, profilePDA: PublicKey, userPDA: PublicKey, user: PublicKey, sdk: SDK) => {
@@ -15,8 +11,9 @@ export const handleCreatePost = async (metadataUri: string, profilePDA: PublicKe
   await post.instructionMethodBuilder.rpc();
 };
 
-const CreatePost = ({ sdk }: Props) => {
+const CreatePost = () => {
   const wallet = useWallet();
+  const { sdk } = useGumContext();
   const { publicKey: sessionPublicKey, sessionToken, createSession, signAndSendTransaction } = useSessionWallet();
   const [metadataUri, setMetadataUri] = useState('');
   const [userProfileAccounts, setUserProfileAccounts] = useState<any>([]);
