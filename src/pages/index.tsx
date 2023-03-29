@@ -1,30 +1,29 @@
 import Head from 'next/head'
 import styles from '@/styles/Home.module.css'
 import dynamic from 'next/dynamic'
-import { AnchorWallet, useAnchorWallet, useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey, Connection } from "@solana/web3.js";
-import { useEffect, useMemo, useState } from 'react';
+import { useWallet } from '@solana/wallet-adapter-react'
+import { PublicKey } from "@solana/web3.js";
+import { useEffect, useState } from 'react';
 import CreatePost from '@/components/createPost';
 import CreateProfile from '@/components/createProfile';
 import CreateUser from '@/components/createUser';
-import { useGumSDK } from '@/hooks/useGumSDK';
+import { withGumSDK } from '@/components/withGumSDK';
+import { useGumContext } from '@gumhq/react-sdk';
 
 const WalletMultiButtonDynamic = dynamic(
     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
     { ssr: false }
 );
 
-export default function Home() {
+function Home() {
   const wallet = useWallet();
+  const { sdk } = useGumContext();
   const userPublicKey = wallet?.publicKey as PublicKey;
   
   const [usersList, setUsersList] = useState<any[]>([]);
   const [profilesList, setProfilesList] = useState<any[]>([]);
   const [profileMetadataList, setProfileMetadataList] = useState<any[]>([]);
   const [postsList, setPostsList] = useState<any[]>([]);
-
-  const connection = useMemo(() => new Connection("https://api.devnet.solana.com", "confirmed"), []);
-  const sdk = useGumSDK(connection, { preflightCommitment: "confirmed" }, "devnet");
 
   useEffect(() => {
     if (!wallet.connected) return;
@@ -37,7 +36,7 @@ export default function Home() {
         setPostsList( await sdk.post.getPostAccountsByUser(userPublicKey));
     };
     getData();
-  }, [wallet.connected]);
+  }, [wallet.connected, sdk, userPublicKey]);
 
   return (
     <>
@@ -130,3 +129,4 @@ export default function Home() {
   )
 }
 
+export default withGumSDK(Home);
