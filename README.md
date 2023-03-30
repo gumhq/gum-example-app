@@ -12,7 +12,13 @@ First, install the dependencies:
 yarn install
 ```
 
-Then, run the development server:
+Then, set the NEXT_PUBLIC_SOLANA_ENDPOINT environment variable to your Solana endpoint:
+
+```
+export NEXT_PUBLIC_SOLANA_ENDPOINT=https://your-solana-endpoint.com
+```
+
+Finally, run the development server:
 
 ```bash
 yarn dev
