@@ -4,8 +4,6 @@
 import { GumProvider, SessionWalletProvider, useSessionKeyManager } from '@gumhq/react-sdk';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useGumSDK } from '@/hooks/useGumSDK';
-import { useMemo } from 'react';
-import { Connection } from '@solana/web3.js';
 
 interface GumSDKProviderProps {
   children: React.ReactNode;
