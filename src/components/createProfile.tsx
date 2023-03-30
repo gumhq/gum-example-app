@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from '@/styles/Home.module.css'
 import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react'; 
-import { SDK, useCreateProfile, useGumContext } from '@gumhq/react-sdk';
+import { useCreateProfile, useGumContext } from '@gumhq/react-sdk';
+import { useUserAccounts } from '@/hooks/useUserAccounts';
 
 type Namespace = "Professional" | "Personal" | "Gaming" | "Degen";
 
@@ -11,23 +12,10 @@ const CreateProfile = () => {
   const { sdk } = useGumContext();
   const userPublicKey = wallet.publicKey as PublicKey;
   const [metadataUri, setMetadataUri] = useState('');
-  const [usersList, setUsersList] = useState([]);
   const [selectedNamespaceOption, setSelectedNamespaceOption] = useState("Personal") as [Namespace, any];
   const [selectedUserOption, setSelectedUserOption] = useState("");
+  const usersList = useUserAccounts(sdk);
   const { getOrCreate, isCreatingProfile, createProfileError } = useCreateProfile(sdk);
-
-  useEffect(() => {
-    if (!wallet.connected) return;
-    const init = async () => {
-      const users = await sdk.user.getUserAccountsByUser(userPublicKey) as any;
-      const usersList = users.map((user: any) => user.publicKey.toBase58());
-      setUsersList(usersList);
-      if (usersList.length > 0) {
-        setSelectedUserOption(usersList[0]);
-      }
-    };
-    init();
-  }, [wallet.connected, userPublicKey]);
 
   return (
     <div>
