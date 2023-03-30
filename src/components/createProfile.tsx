@@ -1,47 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from '@/styles/Home.module.css'
 import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react'; 
-import { SDK, useCreateProfile } from '@gumhq/react-sdk';
+import { useCreateProfile, useGumContext } from '@gumhq/react-sdk';
+import { useUserAccounts } from '@/hooks/useUserAccounts';
 
 type Namespace = "Professional" | "Personal" | "Gaming" | "Degen";
 
-interface Props {
-  sdk: SDK;
-}
-
-export const handleCreateProfile = async (
-  userPDA: PublicKey,
-  namespace: Namespace,
-  user: PublicKey,
-  sdk: SDK
-) => {
-  if (!userPDA) return;
-  const program = await sdk.profile.create(userPDA, namespace, user);
-  await program.instructionMethodBuilder.rpc();
-};
-
-const CreateProfile = ({sdk}: Props) => {
+const CreateProfile = () => {
   const wallet = useWallet();
+  const { sdk } = useGumContext();
   const userPublicKey = wallet.publicKey as PublicKey;
   const [metadataUri, setMetadataUri] = useState('');
-  const [usersList, setUsersList] = useState([]);
   const [selectedNamespaceOption, setSelectedNamespaceOption] = useState("Personal") as [Namespace, any];
   const [selectedUserOption, setSelectedUserOption] = useState("");
-  const { create, profilePDA, error, loading } = useCreateProfile(sdk);
-
-  useEffect(() => {
-    if (!wallet.connected) return;
-    const init = async () => {
-      const users = await sdk.user.getUserAccountsByUser(userPublicKey) as any;
-      const usersList = users.map((user: any) => user.publicKey.toBase58());
-      setUsersList(usersList);
-      if (usersList.length > 0) {
-        setSelectedUserOption(usersList[0]);
-      }
-    };
-    init();
-  }, [wallet.connected]);
+  const usersList = useUserAccounts(sdk);
+  const { getOrCreate, isCreatingProfile, createProfileError } = useCreateProfile(sdk);
 
   return (
     <div>
@@ -87,7 +61,8 @@ const CreateProfile = ({sdk}: Props) => {
         className={`${styles.button}`}
         onClick={async (event) => {
           event.preventDefault();
-          create(metadataUri, selectedNamespaceOption, new PublicKey(selectedUserOption), userPublicKey);
+          const profilePDA = await getOrCreate(metadataUri, selectedNamespaceOption, new PublicKey(selectedUserOption), userPublicKey);
+          console.log('profilePDA', profilePDA);
         }}
       >
         Create Profile

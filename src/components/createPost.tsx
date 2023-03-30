@@ -1,44 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from '@/styles/Home.module.css';
 import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useCreatePost, SDK } from '@gumhq/react-sdk';
-
-interface Props {
-  sdk: SDK;
-}
+import { useCreatePost, SDK, useSessionWallet, useGumContext } from '@gumhq/react-sdk';
+import { updateSessionWallet } from '@/utils/sessionManager';
+import { useProfileAccounts } from '@/hooks/useProfileAccounts';
 
 // Use this function if you want to create a post without using the react-sdk
-export const handleCreatePost = async (metadataUri: String, profilePDA: PublicKey, userPDA: PublicKey, user: PublicKey, sdk: SDK) => {
+export const handleCreatePost = async (metadataUri: string, profilePDA: PublicKey, userPDA: PublicKey, user: PublicKey, sdk: SDK) => {
   const post = await sdk.post.create(metadataUri, profilePDA, userPDA, user);
   await post.instructionMethodBuilder.rpc();
 };
 
-const CreatePost = ({ sdk }: Props) => {
+const CreatePost = () => {
   const wallet = useWallet();
+  const { sdk } = useGumContext();
+  const { publicKey: sessionPublicKey, sessionToken, createSession, signAndSendTransaction } = useSessionWallet();
   const [metadataUri, setMetadataUri] = useState('');
-  const [userProfileAccounts, setUserProfileAccounts] = useState<any>([]);
   const [selectedProfileOption, setSelectedProfileOption] = useState<any>(null);
-  const { create, postPDA, error, loading } = useCreatePost(sdk);
-
-  useEffect(() => {
-    if (!wallet.connected) return;
-    sdk.profile.getProfileAccountsByUser(wallet.publicKey as PublicKey)
-      .then((accounts) => {
-        if (!accounts) return;
-        const profileOptions = accounts.map((account) => {
-          return {
-            profilePDA: account.publicKey.toBase58(),
-            userPDA: account.account.user.toBase58(),
-          }
-        });
-        setUserProfileAccounts(profileOptions);
-        if (profileOptions.length === 1) {
-          setSelectedProfileOption(profileOptions[0]);
-        }
-      });
-
-  }, [wallet.connected]);
+  const userProfileAccounts = useProfileAccounts(sdk);
+  const { create, postPDA, isCreatingPost, createPostError } = useCreatePost(sdk);
 
   return (
     <div>
@@ -71,9 +52,13 @@ const CreatePost = ({ sdk }: Props) => {
       <button
         className={`${styles.button}`}
         disabled={!selectedProfileOption}
-        onClick={(event) => {
+        onClick={async (event) => {
           event.preventDefault();
-          create(metadataUri, selectedProfileOption?.profilePDA, selectedProfileOption?.userPDA, wallet.publicKey as PublicKey);
+
+          const session = await updateSessionWallet(sessionPublicKey, sessionToken, createSession);
+          if (!session || !session.sessionPublicKey || !session.sessionToken ) return;
+          const txId = await create(metadataUri, selectedProfileOption?.profilePDA, selectedProfileOption?.userPDA, session.sessionPublicKey, new PublicKey(session.sessionToken), signAndSendTransaction);
+          console.log('txId', txId);
         }}
       >
         Create Post
