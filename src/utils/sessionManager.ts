@@ -1,10 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 
   
-  export const updateSessionWallet = async (sessionPublicKey: PublicKey | null , sessionToken: string | null, createSession: (targetProgram: PublicKey, topUp: boolean, validUntil?: number | undefined) => Promise<{
-    sessionToken: string;
-    publicKey: string;
-} | undefined>) => {
+  export const updateSessionWallet = async (sessionPublicKey: PublicKey | null , sessionToken: string | null, createSession: any) => {
     let currentSessionPublicKey = sessionPublicKey;
     let currentSessionToken = sessionToken;
 

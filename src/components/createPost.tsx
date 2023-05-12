@@ -15,7 +15,7 @@ export const handleCreatePost = async (metadataUri: string, profilePDA: PublicKe
 const CreatePost = () => {
   const wallet = useWallet();
   const { sdk } = useGumContext();
-  const { publicKey: sessionPublicKey, sessionToken, createSession, signAndSendTransaction } = useSessionWallet();
+  const { publicKey: sessionPublicKey, sessionToken, createSession, sendTransaction } = useSessionWallet();
   const [metadataUri, setMetadataUri] = useState('');
   const [selectedProfileOption, setSelectedProfileOption] = useState<any>(null);
   const userProfileAccounts = useProfileAccounts(sdk);
@@ -57,7 +57,7 @@ const CreatePost = () => {
 
           const session = await updateSessionWallet(sessionPublicKey, sessionToken, createSession);
           if (!session || !session.sessionPublicKey || !session.sessionToken ) return;
-          const txId = await create(metadataUri, selectedProfileOption?.profilePDA, selectedProfileOption?.userPDA, session.sessionPublicKey, new PublicKey(session.sessionToken), signAndSendTransaction);
+          const txId = await create(metadataUri, selectedProfileOption?.profilePDA, selectedProfileOption?.userPDA, session.sessionPublicKey, new PublicKey(session.sessionToken), sendTransaction);
           console.log('txId', txId);
         }}
       >
