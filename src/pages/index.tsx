@@ -13,7 +13,7 @@ const WalletMultiButtonDynamic = dynamic(
 );
 
 function Home() {
-    const { usersList, profilesList, profileMetadataList, postsList } = useData();
+    const { usersList, profilesList, profileMetadataList, postsList, refreshData } = useData();
 
 
     const renderUserCard = (user: any, index: any) => (
@@ -79,7 +79,7 @@ function Home() {
                 <CreateProfile />
             </div>
             <div className={styles.componentContainer}>
-                <CreatePost />
+                <CreatePost onPostCreated={refreshData} />
             </div>
             </div>
             <div className={styles.rightContainer}>

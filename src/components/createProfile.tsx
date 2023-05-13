@@ -7,11 +7,13 @@ import { useUserAccounts } from '@/hooks/useUserAccounts';
 
 type Namespace = "Professional" | "Personal" | "Gaming" | "Degen";
 
+const defaultProfileMetadataUri = 'https://raw.githubusercontent.com/gumhq/sdk/master/packages/gpl-core/tests/utils/profile.json';
+
 const CreateProfile = () => {
   const wallet = useWallet();
   const { sdk } = useGumContext();
   const userPublicKey = wallet.publicKey as PublicKey;
-  const [metadataUri, setMetadataUri] = useState('');
+  const [metadataUri, setMetadataUri] = useState(defaultProfileMetadataUri);
   const [selectedNamespaceOption, setSelectedNamespaceOption] = useState("Personal") as [Namespace, any];
   const [selectedUserOption, setSelectedUserOption] = useState("");
   const usersList = useUserAccounts(sdk);

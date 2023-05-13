@@ -13,6 +13,9 @@ export const useData = () => {
   const [profileMetadataList, setProfileMetadataList] = useState<any[]>([]);
   const [postsList, setPostsList] = useState<any[]>([]);
 
+  // Refresh trigger state
+  const [refresh, setRefresh] = useState(false);
+
   useEffect(() => {
     if (!wallet.connected) return;
     if (!sdk) return;
@@ -24,7 +27,12 @@ export const useData = () => {
       setPostsList(await sdk.post.getPostAccountsByUser(userPublicKey));
     };
     getData();
-  }, [wallet.connected, sdk, userPublicKey]);
+  }, [wallet.connected, sdk, userPublicKey, refresh]); // Add refresh to the dependency array
 
-  return { usersList, profilesList, profileMetadataList, postsList };
+  // Expose a function to trigger the refresh from outside
+  const refreshData = () => {
+    setRefresh(prev => !prev);
+  };
+
+  return { usersList, profilesList, profileMetadataList, postsList, refreshData };
 };

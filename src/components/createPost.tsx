@@ -12,7 +12,7 @@ export const handleCreatePost = async (metadataUri: string, profilePDA: PublicKe
   await post.instructionMethodBuilder.rpc();
 };
 
-const CreatePost = () => {
+const CreatePost = ({ onPostCreated }: any) => {
   const wallet = useWallet();
   const { sdk } = useGumContext();
   const { publicKey: sessionPublicKey, sessionToken, createSession, sendTransaction } = useSessionWallet();
@@ -59,6 +59,11 @@ const CreatePost = () => {
           if (!session || !session.sessionPublicKey || !session.sessionToken ) return;
           const txId = await create(metadataUri, selectedProfileOption?.profilePDA, selectedProfileOption?.userPDA, session.sessionPublicKey, new PublicKey(session.sessionToken), sendTransaction);
           console.log('txId', txId);
+
+          // Call the onPostCreated prop function
+          if (onPostCreated && txId) {
+            onPostCreated();
+          }
         }}
       >
         Create Post
