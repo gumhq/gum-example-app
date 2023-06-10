@@ -6,6 +6,8 @@ import { useCreatePost, SDK, useSessionWallet, useGumContext } from '@gumhq/reac
 import { updateSessionWallet } from '@/utils/sessionManager';
 import { useProfileAccounts } from '@/hooks/useProfileAccounts';
 
+const defaultPostMetadataUri = 'https://arweave.net/7Hfw-ue9GJ4kZrRM-Qjp2BTSF54Dr8DaE7szAsoDMd0';
+
 // Use this function if you want to create a post without using the react-sdk
 export const handleCreatePost = async (metadataUri: string, profilePDA: PublicKey, userPDA: PublicKey, user: PublicKey, sdk: SDK) => {
   const post = await sdk.post.create(metadataUri, profilePDA, userPDA, user);
@@ -16,7 +18,7 @@ const CreatePost = ({ onPostCreated }: any) => {
   const wallet = useWallet();
   const { sdk } = useGumContext();
   const { publicKey: sessionPublicKey, sessionToken, createSession, sendTransaction } = useSessionWallet();
-  const [metadataUri, setMetadataUri] = useState('');
+  const [metadataUri, setMetadataUri] = useState(defaultPostMetadataUri);
   const [selectedProfileOption, setSelectedProfileOption] = useState<any>(null);
   const userProfileAccounts = useProfileAccounts(sdk);
   const { create, postPDA, isCreatingPost, createPostError } = useCreatePost(sdk);
