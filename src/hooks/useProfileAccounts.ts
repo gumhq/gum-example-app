@@ -9,13 +9,12 @@ export const useProfileAccounts = (sdk: SDK) => {
 
   useEffect(() => {
     if (!wallet.connected) return;
-    sdk.profile.getProfileAccountsByUser(wallet.publicKey as PublicKey)
+    sdk.profile.getProfilesByAuthority(wallet.publicKey as PublicKey)
       .then((accounts: any[]) => {
         if (!accounts) return;
         const profileOptions = accounts.map((account) => {
           return {
-            profilePDA: account.publicKey.toBase58(),
-            userPDA: account.account.user.toBase58(),
+            profilePDA: account.address,
           }
         });
         setUserProfileAccounts(profileOptions);

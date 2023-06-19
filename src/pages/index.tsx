@@ -3,9 +3,12 @@ import styles from '@/styles/Home.module.css';
 import dynamic from 'next/dynamic';
 import CreatePost from '@/components/createPost';
 import CreateProfile from '@/components/createProfile';
-import CreateUser from '@/components/createUser';
 import ListCard from '@/components/ListCard';
 import { useData } from '@/hooks/useData';
+import CreateDomain from '@/components/createDomain';
+import TransferDomain from '@/components/transferDomain';
+import BadgeComponent from '@/components/badgeComponent';
+import CreateReaction from '@/components/createReaction';
 
 const WalletMultiButtonDynamic = dynamic(
   async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
@@ -13,16 +16,15 @@ const WalletMultiButtonDynamic = dynamic(
 );
 
 function Home() {
-    const { usersList, profilesList, profileMetadataList, postsList, refreshData } = useData();
+    const { userDomainList, profilesList, postsList, issuerList, refreshData } = useData();
 
-
-    const renderUserCard = (user: any, index: any) => (
+    // DgpTGt1CJsJRGzfzvcgJ93panPf2cRZLNkakJ4wpTwta is the TLD for .gum domains on devnet
+    const renderDomainCard = (domain: any, index: any) => (
         <div key={index} className={styles.userCard}>
-        <div className={styles.userNumber}>{index + 1}</div>
-        <div className={styles.userInfo}>
-            <p className={styles.userEmail}>User Account: {user.publicKey.toBase58()}</p>
-            <p className={styles.userAuthority}>Authority: {user.account.authority.toBase58()}</p>
-        </div>
+            <div className={styles.userNumber}>{index + 1}</div>
+            <div className={styles.userInfo}>
+                <p className={styles.userEmail}>Domain: {domain.name}{domain.domain === "DgpTGt1CJsJRGzfzvcgJ93panPf2cRZLNkakJ4wpTwta" ? ".gum" : ""} </p> 
+            </div>
         </div>
     );
 
@@ -30,19 +32,7 @@ function Home() {
         <div key={index} className={styles.userCard}>
             <div className={styles.userNumber}>{index + 1}</div>
             <div className={styles.userInfo}>
-                <p className={styles.userEmail}>Profile Account: {profile.publicKey.toBase58()}</p>
-                <p className={styles.userAuthority}>User Account: {profile.account.user.toBase58()}</p>
-            </div>
-        </div>
-    );
-
-    const renderProfileMetadataCard = (profileMetadata: any, index: any) => (
-        <div key={index} className={styles.userCard}>
-            <div className={styles.userNumber}>{index + 1}</div>
-            <div className={styles.userInfo}>
-                <p className={styles.userEmail}>Profile Metadata Account: {profileMetadata[0].publicKey.toBase58()}</p>
-                <p className={styles.userAuthority}>Profile Account: {profileMetadata[0].account.profile.toBase58()}</p>
-                <p className={styles.userAuthority}>MetadataUri: {JSON.stringify(profileMetadata[0].account.metadataUri)}</p>
+                <p className={styles.userEmail}>Profile Account: {profile.address}</p>
             </div>
         </div>
     );
@@ -51,14 +41,13 @@ function Home() {
         <div key={index} className={styles.userCard}>
             <div className={styles.userNumber}>{index + 1}</div>
             <div className={styles.userInfo}>
-                <p className={styles.userEmail}>Post Account: {post.publicKey.toBase58()}</p>
-                <p className={styles.userAuthority}>Profile Account: {post.account.profile.toBase58()}</p>
-                <p className={styles.userAuthority}>MetadataUri: {JSON.stringify(post.account.metadataUri)}</p>
+                <p className={styles.userEmail}>Post Account: {post.address}</p>
+                <p className={styles.userAuthority}>Profile Account: {post.profile}</p>
+                <p className={styles.userAuthority}>MetadataUri: {JSON.stringify(post.metadata_uri)}</p>
             </div>
         </div>
     );
     
-
     return (
         <>
         <Head>
@@ -73,7 +62,13 @@ function Home() {
                 <WalletMultiButtonDynamic />
             </div>
             <div className={styles.componentContainer}>
-                <CreateUser />
+                <CreateDomain />
+            </div>
+            <div className={styles.componentContainer}>
+                <TransferDomain />
+            </div>
+            <div className={styles.componentContainer}>
+                <BadgeComponent />
             </div>
             <div className={styles.componentContainer}>
                 <CreateProfile />
@@ -81,11 +76,13 @@ function Home() {
             <div className={styles.componentContainer}>
                 <CreatePost onPostCreated={refreshData} />
             </div>
+            <div className={styles.componentContainer}>
+                <CreateReaction />
+            </div>
             </div>
             <div className={styles.rightContainer}>
-                <ListCard title="Your User Accounts" list={usersList} renderItem={renderUserCard} />
+                <ListCard title="Your Domain Accounts" list={userDomainList} renderItem={renderDomainCard} />
                 <ListCard title="Your Profile Accounts" list={profilesList} renderItem={renderProfileCard} />
-                <ListCard title="Your Profile Metadata Accounts" list={profileMetadataList} renderItem={renderProfileMetadataCard} />
                 <ListCard title="Your Post Accounts" list={postsList} renderItem={renderPostCard} />
             </div>
         </main>

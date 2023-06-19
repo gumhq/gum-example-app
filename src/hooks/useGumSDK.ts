@@ -9,7 +9,7 @@ export const useGumSDK = () => {
   const anchorWallet = useAnchorWallet() as AnchorWallet;
 
   // GraphQL endpoint is chosen based on the network
-  const graphqlEndpoint = GRAPHQL_ENDPOINTS['devnet'];
+  const graphqlEndpoint = "https://gum-indexer-smartprofile-devnet-lafkve5tyq-uc.a.run.app/v1/graphql";
 
   const gqlClient = useMemo(() => new GraphQLClient(graphqlEndpoint), [graphqlEndpoint]);
 
