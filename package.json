@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@gumhq/react-sdk": "^2.1.0",
+    "@gumhq/react-sdk": "^3.0.0",
     "@next/font": "13.1.5",
     "@solana/wallet-adapter-base": "^0.9.20",
     "@solana/wallet-adapter-react": "^0.15.26",
