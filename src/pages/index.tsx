@@ -68,9 +68,6 @@ function Home() {
                 <TransferDomain />
             </div>
             <div className={styles.componentContainer}>
-                <BadgeComponent />
-            </div>
-            <div className={styles.componentContainer}>
                 <CreateProfile />
             </div>
             <div className={styles.componentContainer}>

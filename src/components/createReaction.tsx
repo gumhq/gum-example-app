@@ -2,30 +2,45 @@ import React, { useState } from 'react';
 import styles from '@/styles/Home.module.css';
 import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useCreatePost, SDK, useSessionWallet, useGumContext } from '@gumhq/react-sdk';
+import { SDK, useSessionWallet, useGumContext, useReaction } from '@gumhq/react-sdk';
 import { updateSessionWallet } from '@/utils/sessionManager';
 import { useProfileAccounts } from '@/hooks/useProfileAccounts';
+import { usePostAccounts } from '@/hooks/usePostAccounts';
 
-const defaultPostMetadataUri = 'https://arweave.net/7Hfw-ue9GJ4kZrRM-Qjp2BTSF54Dr8DaE7szAsoDMd0';
+const defaultReaction = '👍';
 
-// Use this function if you want to create a post without using the react-sdk
-export const handleCreatePost = async (metadataUri: string, profilePDA: PublicKey, userPDA: PublicKey, user: PublicKey, sdk: SDK) => {
-  const post = await sdk.post.create(metadataUri, profilePDA, userPDA, user);
-  await post.instructionMethodBuilder.rpc();
-};
-
-const CreatePost = ({ onPostCreated }: any) => {
-  const wallet = useWallet();
+const CreateReaction = ({ onPostCreated }: any) => {
+  const { publicKey } = useWallet();
   const { sdk } = useGumContext();
   const { publicKey: sessionPublicKey, sessionToken, createSession, sendTransaction } = useSessionWallet();
-  const [metadataUri, setMetadataUri] = useState(defaultPostMetadataUri);
+  const [reaction, setReaction] = useState(defaultReaction);
   const [selectedProfileOption, setSelectedProfileOption] = useState<any>(null);
+  const [selectedPostOption, setSelectedPostOption] = useState<any>(null);
   const userProfileAccounts = useProfileAccounts(sdk);
-  const { createUsingSession, postPDA, isCreatingPost, createPostError } = useCreatePost(sdk);
-  console.log('error', createPostError)
+  const userPostAccounts = usePostAccounts(sdk);
+  const { createReactionUsingSession, isReacting, createReactionError } = useReaction(sdk);
+  console.log('error', createReactionError)
   return (
     <div>
-      <h1 className={`${styles.title}`}>Create New Post</h1>
+      <h1 className={`${styles.title}`}>React on post</h1>
+      <div className={`${styles.field}`}>
+        <label className={`${styles.label}`}>Select Post:</label>
+        <select
+          className={`${styles.select}`}
+          value={selectedPostOption?.postPDA || ''}
+          onChange={(event) => {
+            const selectedOption = userPostAccounts.find((option: any) => option.postPDA === event.target.value);
+            setSelectedPostOption(selectedOption || null);
+          }}
+        >
+          <option value="">Select Post</option>
+          {userPostAccounts.map((option: any) => (
+            <option key={option.postPDA} value={option.postPDA}>
+              {option.postPDA}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className={`${styles.field}`}>
         <label className={`${styles.label}`}>Select Profile:</label>
         <select
@@ -44,11 +59,11 @@ const CreatePost = ({ onPostCreated }: any) => {
           ))}
         </select>
       </div>
-      <label className={`${styles.label}`}>Enter MetadataUri:</label>
+      <label className={`${styles.label}`}>Enter Reaction:</label>
       <input
         type="text"
-        value={metadataUri}
-        onChange={(event) => setMetadataUri(event.target.value)}
+        value={reaction}
+        onChange={(event) => setReaction(event.target.value)}
         className={`${styles.input}`}
       />
       <button
@@ -59,19 +74,14 @@ const CreatePost = ({ onPostCreated }: any) => {
 
           const session = await updateSessionWallet(sessionPublicKey, sessionToken, createSession);
           if (!session || !session.sessionPublicKey || !session.sessionToken || !sendTransaction ) return;
-          const txId = await createUsingSession(metadataUri, selectedProfileOption?.profilePDA, session.sessionPublicKey, new PublicKey(session.sessionToken), sendTransaction, session.sessionPublicKey);
+          const txId = await createReactionUsingSession(reaction, selectedProfileOption?.profilePDA, selectedPostOption.postPDA, session.sessionPublicKey, new PublicKey(session.sessionToken), session.sessionPublicKey, sendTransaction);
           console.log('txId', txId);
-
-          // Call the onPostCreated prop function
-          if (onPostCreated && txId) {
-            onPostCreated();
-          }
         }}
       >
-        Create Post
+        Create Reaction
       </button>
     </div>
   );
 };
 
-export default CreatePost;
+export default CreateReaction;
