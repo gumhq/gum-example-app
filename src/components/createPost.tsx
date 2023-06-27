@@ -15,13 +15,12 @@ export const handleCreatePost = async (metadataUri: string, profilePDA: PublicKe
 };
 
 const CreatePost = ({ onPostCreated }: any) => {
-  const wallet = useWallet();
   const { sdk } = useGumContext();
   const { publicKey: sessionPublicKey, sessionToken, createSession, sendTransaction } = useSessionWallet();
   const [metadataUri, setMetadataUri] = useState(defaultPostMetadataUri);
   const [selectedProfileOption, setSelectedProfileOption] = useState<any>(null);
   const userProfileAccounts = useProfileAccounts(sdk);
-  const { createUsingSession, postPDA, isCreatingPost, createPostError } = useCreatePost(sdk);
+  const { createWithSession, postPDA, isCreatingPost, createPostError } = useCreatePost(sdk);
   console.log('error', createPostError)
   return (
     <div>
@@ -59,7 +58,7 @@ const CreatePost = ({ onPostCreated }: any) => {
 
           const session = await updateSessionWallet(sessionPublicKey, sessionToken, createSession);
           if (!session || !session.sessionPublicKey || !session.sessionToken || !sendTransaction ) return;
-          const txId = await createUsingSession(metadataUri, selectedProfileOption?.profilePDA, session.sessionPublicKey, new PublicKey(session.sessionToken), sendTransaction, session.sessionPublicKey);
+          const txId = await createWithSession(metadataUri, selectedProfileOption?.profilePDA, session.sessionPublicKey, new PublicKey(session.sessionToken), sendTransaction, session.sessionPublicKey);
           console.log('txId', txId);
 
           // Call the onPostCreated prop function

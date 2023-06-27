@@ -18,7 +18,7 @@ const CreateReaction = ({ onPostCreated }: any) => {
   const [selectedPostOption, setSelectedPostOption] = useState<any>(null);
   const userProfileAccounts = useProfileAccounts(sdk);
   const userPostAccounts = usePostAccounts(sdk);
-  const { createReactionUsingSession, isReacting, createReactionError } = useReaction(sdk);
+  const { createReactionWithSession, isReacting, createReactionError } = useReaction(sdk);
   console.log('error', createReactionError)
   return (
     <div>
@@ -74,7 +74,7 @@ const CreateReaction = ({ onPostCreated }: any) => {
 
           const session = await updateSessionWallet(sessionPublicKey, sessionToken, createSession);
           if (!session || !session.sessionPublicKey || !session.sessionToken || !sendTransaction ) return;
-          const txId = await createReactionUsingSession(reaction, selectedProfileOption?.profilePDA, selectedPostOption.postPDA, session.sessionPublicKey, new PublicKey(session.sessionToken), session.sessionPublicKey, sendTransaction);
+          const txId = await createReactionWithSession(reaction, selectedProfileOption?.profilePDA, selectedPostOption.postPDA, session.sessionPublicKey, new PublicKey(session.sessionToken), session.sessionPublicKey, sendTransaction);
           console.log('txId', txId);
         }}
       >

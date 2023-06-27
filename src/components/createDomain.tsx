@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from '@/styles/Home.module.css';
-import { GumNameService, useGumContext } from '@gumhq/react-sdk';
+import { GUM_TLD_ACCOUNT, GumNameService, useGumContext } from '@gumhq/react-sdk';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 const CreateDomain = () => {
@@ -29,8 +29,7 @@ const CreateDomain = () => {
             event.preventDefault();
             const nameservice = new GumNameService(sdk);
 
-            const gumTld = await nameservice.getOrCreateTLD("gum");
-            console.log(`gumTld: ${gumTld}`);
+            const gumTld = GUM_TLD_ACCOUNT;
 
             const screenName = await nameservice.getOrCreateDomain(gumTld, domain, publicKey);
             console.log(`screenName: ${screenName}`);
