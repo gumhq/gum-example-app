@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useGumContext } from '@gumhq/react-sdk';
+import { GumNameService, useGumContext } from '@gumhq/react-sdk';
 
 export const useData = () => {
   const wallet = useWallet();
   const { sdk } = useGumContext();
   const userPublicKey = wallet?.publicKey as PublicKey;
+  const nameservice = new GumNameService(sdk);
 
-  const [usersList, setUsersList] = useState<any[]>([]);
+  const [userDomainList, setUserDomainList] = useState<any[]>([]);
   const [profilesList, setProfilesList] = useState<any[]>([]);
-  const [profileMetadataList, setProfileMetadataList] = useState<any[]>([]);
   const [postsList, setPostsList] = useState<any[]>([]);
+  const [issuerList, setIssuerList] = useState<any[]>([]);
 
   // Refresh trigger state
   const [refresh, setRefresh] = useState(false);
@@ -20,11 +21,15 @@ export const useData = () => {
     if (!wallet.connected) return;
     if (!sdk) return;
     const getData = async () => {
-      const profileMetadataList = await sdk.profileMetadata.getProfileMetadataAccountsByUser(userPublicKey);
-      setUsersList(await sdk.user.getUserAccountsByUser(userPublicKey));
-      setProfilesList(await sdk.profile.getProfileAccountsByUser(userPublicKey));
-      setProfileMetadataList(profileMetadataList as any);
-      setPostsList(await sdk.post.getPostAccountsByUser(userPublicKey));
+      const profileList = await sdk.profile.getProfilesByAuthority(userPublicKey);
+      const nameserviceList = await nameservice.getNameservicesByAuthority(wallet.publicKey?.toBase58() as string)
+      const issuerList = await sdk.badge.getIssuerByAuthority(userPublicKey);
+      const postList  = await sdk.post.getPostsByAuthority(userPublicKey);
+
+      setIssuerList(issuerList);
+      setUserDomainList(nameserviceList);
+      setProfilesList(profileList);
+      setPostsList(postList);
     };
     getData();
   }, [wallet.connected, sdk, userPublicKey, refresh]); // Add refresh to the dependency array
@@ -34,5 +39,5 @@ export const useData = () => {
     setRefresh(prev => !prev);
   };
 
-  return { usersList, profilesList, profileMetadataList, postsList, refreshData };
+  return { userDomainList, profilesList, postsList, issuerList, refreshData };
 };

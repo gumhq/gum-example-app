@@ -14,7 +14,8 @@ require('@solana/wallet-adapter-react-ui/styles.css');
 dotenv.config();
 
 export default function App({ Component, pageProps }: AppProps) {
-    const network = WalletAdapterNetwork.Devnet;
+    const cluster = process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'devnet';
+    const network = useMemo(() => (cluster === 'mainnet-beta' ? WalletAdapterNetwork.Mainnet : WalletAdapterNetwork.Devnet), [cluster]);
     const endpoint = process.env.NEXT_PUBLIC_SOLANA_ENDPOINT || clusterApiUrl(network);
     const wallets = useMemo(
         () => [

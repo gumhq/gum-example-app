@@ -3,24 +3,24 @@ import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { SDK } from '@gumhq/react-sdk';
 
-export const useProfileAccounts = (sdk: SDK) => {
+export const usePostAccounts = (sdk: SDK) => {
   const wallet = useWallet();
-  const [userProfileAccounts, setUserProfileAccounts] = useState<any>([]);
+  const [userPostAccounts, setUserPostAccounts] = useState<any>([]);
 
   useEffect(() => {
     if (!wallet.connected) return;
-    sdk.profile.getProfilesByAuthority(wallet.publicKey as PublicKey)
+    sdk.post.getPostsByAuthority(wallet.publicKey as PublicKey)
       .then((accounts: any[]) => {
         if (!accounts) return;
         const profileOptions = accounts.map((account) => {
           return {
-            profilePDA: account.address,
+            postPDA: account.address,
           }
         });
-        setUserProfileAccounts(profileOptions);
+        setUserPostAccounts(profileOptions);
       });
 
   }, [wallet.connected]);
 
-  return userProfileAccounts;
+  return userPostAccounts;
 };

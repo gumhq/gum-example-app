@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import styles from '@/styles/Home.module.css'
+import styles from '@/styles/Home.module.css';
 import { PublicKey } from '@solana/web3.js';
-import { useWallet } from '@solana/wallet-adapter-react'; 
-import { useCreateProfile, useGumContext } from '@gumhq/react-sdk';
-import { useUserAccounts } from '@/hooks/useUserAccounts';
-
-type Namespace = "Professional" | "Personal" | "Gaming" | "Degen";
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useCreateProfile, useDomains, useGumContext } from '@gumhq/react-sdk';
 
 const defaultProfileMetadataUri = 'https://raw.githubusercontent.com/gumhq/sdk/master/packages/gpl-core/tests/utils/profile.json';
 
@@ -14,11 +11,10 @@ const CreateProfile = () => {
   const { sdk } = useGumContext();
   const userPublicKey = wallet.publicKey as PublicKey;
   const [metadataUri, setMetadataUri] = useState(defaultProfileMetadataUri);
-  const [selectedNamespaceOption, setSelectedNamespaceOption] = useState("Personal") as [Namespace, any];
-  const [selectedUserOption, setSelectedUserOption] = useState("");
-  const usersList = useUserAccounts(sdk);
-  const { getOrCreate, isCreatingProfile, createProfileError } = useCreateProfile(sdk);
-
+  const [selectedUserDomainOption, setSelectedUserDomainOption] = useState("");
+  const { userDomainAccounts } = useDomains(sdk, userPublicKey);
+  const { create, isCreatingProfile, createProfileError } = useCreateProfile(sdk);
+  
   return (
     <div>
       <h1 className={`${styles.title}`}>Create New Profile</h1>
@@ -30,31 +26,16 @@ const CreateProfile = () => {
           onChange={(event) => setMetadataUri(event.target.value)}
           className={`${styles.input}`}
         />
-        <label className={`${styles.label}`}>Select User:</label>
+        <label className={`${styles.label}`}>Select Domain:</label>
         <select
           className={`${styles.select}`}
-          value={selectedUserOption}
-          onChange={(event) => setSelectedUserOption(event.target.value)}
+          value={selectedUserDomainOption}
+          onChange={(event) => setSelectedUserDomainOption(event.target.value)}
         >
-          <option value="">Select User</option>
-          {usersList.map((option: string) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-
-        </select>
-      </div>
-     <div className={`${styles.field}`}>
-        <label className={`${styles.label}`}>Profile Type:</label>
-        <select
-          className={`${styles.select}`}
-          value={selectedNamespaceOption}
-          onChange={(event) => setSelectedNamespaceOption(event.target.value)}
-        >
-          {["Personal", "Professional", "Gaming", "Degen"].map((option) => (
-            <option key={option} value={option}>
-              {option}
+          <option value="">Select Domain</option>
+          {userDomainAccounts.map((option: any, index: any) => (
+            <option key={index} value={option.domainPDA}>
+              {option.domainName}
             </option>
           ))}
         </select>
@@ -63,7 +44,7 @@ const CreateProfile = () => {
         className={`${styles.button}`}
         onClick={async (event) => {
           event.preventDefault();
-          const profilePDA = await getOrCreate(metadataUri, selectedNamespaceOption, new PublicKey(selectedUserOption), userPublicKey);
+          const profilePDA = await create(metadataUri, new PublicKey(selectedUserDomainOption), userPublicKey, userPublicKey);
           console.log('profilePDA', profilePDA);
         }}
       >

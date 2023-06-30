@@ -1,7 +1,6 @@
 // The GumSDKProvider component initializes the Gum SDK and SessionKeyManager and provides it to its children via context.
-// Wrap any component that needs access to the Gum SDK with this provider.
 
-import { GumProvider, SessionWalletProvider, useSessionKeyManager } from '@gumhq/react-sdk';
+import { GumProvider, SessionWalletProvider, UploaderProvider, useSessionKeyManager } from '@gumhq/react-sdk';
 import { AnchorWallet, useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useGumSDK } from '@/hooks/useGumSDK';
 
@@ -10,10 +9,11 @@ interface GumSDKProviderProps {
 }
 
 const GumSDKProvider: React.FC<GumSDKProviderProps> = ({ children }) => {
+  const cluster = (process.env.NEXT_PUBLIC_SOLANA_NETWORK as "devnet" | "mainnet-beta") || 'devnet';
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet() as AnchorWallet;
   const sdk = useGumSDK();
-  const sessionWallet = useSessionKeyManager(anchorWallet, connection, "devnet");
+  const sessionWallet = useSessionKeyManager(anchorWallet, connection, cluster);
 
   if (!sdk) {
     return null;
@@ -22,7 +22,13 @@ const GumSDKProvider: React.FC<GumSDKProviderProps> = ({ children }) => {
   return (
     <GumProvider sdk={sdk}>
       <SessionWalletProvider sessionWallet={sessionWallet}>
-        {children}
+        <UploaderProvider
+            uploaderType="arweave"
+            connection={connection}
+            cluster={cluster}
+          >
+            {children}
+        </UploaderProvider>
       </SessionWalletProvider>
     </GumProvider>
   );
