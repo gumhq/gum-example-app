@@ -486,13 +486,13 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
   integrity sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==
 
-"@gumhq/react-sdk@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@gumhq/react-sdk/-/react-sdk-3.0.0.tgz#e793fc1686546bab453d5ad6467d0dd929ea097b"
-  integrity sha512-9abnN22/qtMGwAe7XPqEbdbcyIYNYlqlQ52FDigkHJB9Cd99bXTVU1fJJCTY8Nac6I3X3N+s4cpBKSCeRtgNkA==
+"@gumhq/react-sdk@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@gumhq/react-sdk/-/react-sdk-3.0.1.tgz#f280b037fc55c0d41d6119c77b868892dcfd06fa"
+  integrity sha512-amnFw4AV1oxyFhonyemo46FmM6rToWrT8qwVyd67KoWm1W9H2ycRazTVY1XGcgrVjHBfmDUJJNk3F4Xr6hw4aQ==
   dependencies:
     "@bundlr-network/client" "^0.10.5"
-    "@gumhq/sdk" "^3.0.0"
+    "@gumhq/sdk" "^3.0.1"
     "@orca-so/sdk" "^1.2.25"
     "@project-serum/anchor" "^0.26.0"
     "@shadow-drive/sdk" "^3.3.0"
@@ -505,15 +505,16 @@
     tweetnacl "^1.0.3"
     typescript "^4.9.5"
 
-"@gumhq/sdk@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@gumhq/sdk/-/sdk-3.0.0.tgz#54f9b97698dd4674955d814fbf023936ebe32e6b"
-  integrity sha512-3MBt4JpbWpqmYnzYj3/b5gI03igyJnaCpBM+i3l1GW0haI4cI13U2OhW838hTaU/alSNOF9jS3OLApioX+V3rQ==
+"@gumhq/sdk@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@gumhq/sdk/-/sdk-3.0.1.tgz#b3b9ee91dab8d48387f1878c8efd00b287f271a6"
+  integrity sha512-sgUsLkb/22U3WL0rNNdytjt2P33g2FwUsUW2XHHGnU+mX/jeSnMhs3z/lafzY9vdsCcnyyKrLm3unIOTBwbLkg==
   dependencies:
     "@project-serum/anchor" "^0.26.0"
     axios "^1.2.6"
     graphql "^16.6.0"
     graphql-request "^5.1.0"
+    js-sha3 "^0.8.0"
     randombytes "^2.1.0"
     tweetnacl "^1.0.3"
 
